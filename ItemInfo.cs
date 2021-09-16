@@ -12,5 +12,6 @@ namespace DynamicWebScrape
         public string ItemURL { get; set; }
         public decimal ItemPrice { get; set; }
         public int InternetNum { get; set; }
+        public int Id { get; set; }
     }
 }
