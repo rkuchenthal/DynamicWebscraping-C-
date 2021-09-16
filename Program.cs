@@ -34,7 +34,7 @@ namespace DynamicWebScrape
             Globals.ItemsCounter = 0;
             foreach (Item item in items)
             {
-                //assigned $0 to global so i could test price updates function
+                //test, assigned $0 to global so i could test price updates function
                 Globals.newPrice = "$0";
 
                 //webScraping
@@ -69,13 +69,14 @@ namespace DynamicWebScrape
 
                 IWebElement firstResult = wait.Until(ExpectedConditions.ElementExists(By.Id("standard-price")));
 
-                //test printing
+                //test printing/assigning
                 Console.WriteLine(firstResult.GetAttribute("textContent"));
-                //String price = firstResult.GetAttribute("textContent");
-                String price1 = firstResult.Text;
+                String price = firstResult.GetAttribute("textContent");
+                //String price1 = firstResult.Text;
 
                 //assigning the price to the global variable
                 Globals.newPrice = firstResult.GetAttribute("textContent");
+                //Globals.newPrice = firstResult.Text;
 
                 //test printing
                 Console.WriteLine(Globals.newPrice);
