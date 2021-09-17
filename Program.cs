@@ -101,12 +101,9 @@ namespace DynamicWebScrape
             //remove the $ symbol from the price
             newPrice = newPrice.Replace("$", string.Empty);
 
-            //turn newPrice into a decimal
-            
-            double newDPrice = double.Parse(newPrice);
+            //turn newPrice into a decimal and move decimal 2 spots to the left
+            double newDPrice = double.Parse(newPrice) / 100;
 
-            //move decimal 2 spots to the left
-            newDPrice = newDPrice/100;
 
             //insert deciaml price into the list for the specified item
             items[key].ItemPrice = newDPrice;
