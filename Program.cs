@@ -53,7 +53,7 @@ namespace DynamicWebScrape
             foreach(Item item in items)
             {
 
-                Console.WriteLine(item.ItemPrice);
+                Console.WriteLine(item.ItemName + " = $" + item.ItemPrice);
             }
         }
 
