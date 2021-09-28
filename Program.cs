@@ -24,7 +24,7 @@ namespace DynamicWebScrape
     {
         static void Main(string[] args)
         {
-            
+            ReadCSVFile();
             //Create the items list for all products
             List<Item> items = new List<Item>();
             items.Add(new Item { Id = 0, ItemPrice = 0, ItemName = "2 in. x 4 in. x 96 in. Prime Whitewood Stud", ItemURL = "2-in-x-4-in-x-96-in-Prime-Whitewood-Stud-058449/312528776", InternetNum = 312528776 });
@@ -81,7 +81,8 @@ namespace DynamicWebScrape
                 //Globals.newPrice = firstResult.GetAttribute("textContent");
                 Globals.newPrice = firstResult.Text;
 
-
+                //Had to ad this loop because for some unknown reason Globals.newPrice
+                //was not being assigned the firstResult.text everytime
                 while (Globals.newPrice.Equals("") || Globals.newPrice == null)
                 {
                     Globals.newPrice = firstResult.Text;
@@ -90,11 +91,10 @@ namespace DynamicWebScrape
                 //test printing
                 //Console.WriteLine(Globals.newPrice);
                 //Console.WriteLine(price);
-                 
+
             }
         }
 
-        //TODO make decimal 0.00 format
         //parse the $ from string price, turn string to decimal, then update price on correct list item.
         public static void PriceUpdate(String newPrice, List<Item> items, int key)
         {
@@ -108,6 +108,42 @@ namespace DynamicWebScrape
             //insert deciaml price into the list for the specified item
             items[key].ItemPrice = newDPrice;
             
+        }
+
+        static void ReadCSVFile()
+        {
+            var lines = File.ReadAllLines("Materials.csv");
+            var list = new List<Materials>();
+            foreach (var line in lines)
+            {
+                //returns a string array of all values on each line
+                var matValues = line.Split(',');
+
+                //convert all integers from strings.
+                int matQuantity = StringToInt(matValues[1]);
+                //int matNPI = StringToInt(matValues[2]);
+                int matInternetNum = StringToInt(matValues[4]);
+                
+                //insert correct values in matierals
+                var material = new Materials()
+                {
+                    MatName = matValues[0],
+                    MatAmount = matQuantity,
+                    MatNPI = matValues[2],
+                    MatModel = matValues[3],
+                    MatInternetNum = matInternetNum,
+                    MatURL = matValues[5]
+                };
+
+                list.Add(material);
+            }
+            list.ForEach(x => Console.WriteLine($"{x.MatName}\t{x.MatAmount}\t{x.MatNPI}\t{x.MatModel}\t{x.MatInternetNum}\t{x.MatURL}\t"));
+        }
+
+        public static int StringToInt(string x)
+        {
+            //turn string into integer.
+            return(int.Parse(x));
         }
     }
 
