@@ -33,30 +33,31 @@ namespace DynamicWebScrape
             // Turns String to a list of characters
             char[] charArr = scentence.ToCharArray();
             
+            //this extracts all contents from the CSV file
             ReadCSVFile(items);
 
             Globals.ItemsCounter = 0;
             foreach (Item item in items)
             {
-                //test, assigned $0 to global so i could test price updates function
+                //Test: assigned $0 to global so i could test price updates function
                 //Globals.newPrice = "0";
 
                 //webScraping
                 Scrape(item.ItemURL);
 
-                //test print to check that actual price got assigned to variable
+                //Test: print to check that actual price got assigned to variable
                 //Console.WriteLine(Globals.newPrice);
 
-                //send the info to priceupdate to have the price parsed and added to the list value
+                //send the info to PriceUpdate to have the price parsed and added to the list value
                 PriceUpdate(Globals.newPrice, items, Globals.ItemsCounter, charArr);
+
                 //counter to keep track of all items in the list
                 Globals.ItemsCounter += 1;
             }
 
-            //testing by printing all prices out of items list
+            //Test: by printing all prices out of items list we ensure everything was properly scraped then formatted
             foreach(Item item in items)
             {
-
                 Console.WriteLine(item.ItemName + " = $" + item.ItemPrice);
             }
         }
@@ -71,12 +72,11 @@ namespace DynamicWebScrape
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
                 
                 driver.Navigate().GoToUrl("https://www.homedepot.com/p" + itemURL);
-                //WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
 
-                //IWebElement firstResult = wait.Until(ExpectedConditions.ElementExists(By.Id("standard-price")));
+                //search the web page for the div with the name = "price", and put all child elements into firstResult
                 IWebElement firstResult = wait.Until(ExpectedConditions.ElementExists(By.Name("price")));
 
-                //test printing/assigning
+                //Test: printing/assigning
                 //Console.WriteLine(firstResult.GetAttribute("textContent"));
                 //String price = firstResult.GetAttribute("textContent");
                 //String price1 = firstResult.Text;
@@ -92,7 +92,7 @@ namespace DynamicWebScrape
                     Globals.newPrice = firstResult.Text;
                 }
 
-                //test printing
+                //Test: printing
                 Console.WriteLine(Globals.newPrice);
                 //Console.WriteLine(price);
 
@@ -104,28 +104,22 @@ namespace DynamicWebScrape
         public static void PriceUpdate(String newPrice, List<Item> items, int key, char[] chars)
         {
 
-           
-            //int index = newPrice.LastIndexOf(" "); // Character to remove, space
-            //if (index > 0)
-            //{
-            //    newPrice = newPrice.Substring(0, index); // This will remove all text after character space
-            //}
-                    
-
-            int index1 = newPrice.IndexOf("\r\n"); // Character to remove, "\r\n"
+            // Character to remove, "\r\n" and all following char's
+            int index1 = newPrice.IndexOf("\r\n"); 
             if (index1 > 0)
             {
-                newPrice = newPrice.Substring(0, index1); // This will remove all text after character "\r\n"
+                // This will remove all text after character "\r\n"
+                newPrice = newPrice.Substring(0, index1); 
             }
-                    
-           
 
-            //remove the $ and any other non numerical symbol from the price
+            //remove the $ and any other non numerical symbols left over from the Substing above.
             foreach (var character in chars)
             {
                 if (newPrice.Contains(character))
                 {
+                    //converting the searched char into a string
                     string repChar = character.ToString();
+                    //replacing char with empty
                     newPrice = newPrice.Replace(repChar, string.Empty);
                 }
             }
@@ -137,15 +131,17 @@ namespace DynamicWebScrape
 
             //insert deciaml price into the list for the specified item
             items[key].ItemPrice = newDPrice;
-            //test printing
+            //TEST: printing
             Console.WriteLine(newPrice);
         }
 
 
         static void ReadCSVFile(List<Item> items)
         {
+            //open csv to read from
+            //TODO: research whether or not File. auto closes the file to improve speed.
             var lines = File.ReadAllLines("Materials.csv");
-            var list = new List<Materials>();
+            var list = new List<Item>();
             foreach (var line in lines)
             {
                 //returns a string array of all values on each line
@@ -153,10 +149,11 @@ namespace DynamicWebScrape
 
                 //convert all integers from strings.
                 int matQuantity = StringToInt(matValues[1]);
+                //TODO: once we fill in all NPI #'s we will switch this back to integers.
                 //int matNPI = StringToInt(matValues[2]);
                 int matInternetNum = StringToInt(matValues[4]);
 
-                //insert correct values in matierals
+                //insert correct values into Item objects
                 var item = new Item()
                 {
                     ItemName = matValues[0],
@@ -167,9 +164,10 @@ namespace DynamicWebScrape
                     ItemURL = matValues[5],
                     ItemPrice = 0
                 };
-
+                //add item into the main items list
                 items.Add(item);
             }
+            //TEST: print all items in items to show they all were transferred over from the csv properly
             items.ForEach(x => Console.WriteLine($"{x.ItemName}\t{x.ItemQuant}\t{x.ItemNPI}\t{x.ItemModel}\t{x.InternetNum}\t{x.ItemURL}\t"));
         }
 
