@@ -123,6 +123,7 @@ namespace DynamicWebScrape
                     newPrice = newPrice.Replace(repChar, string.Empty);
                 }
             }
+            //TODO: check to see if this line is still needed.
             newPrice = newPrice.Replace("\r\n90", string.Empty);
 
             //turn newPrice into a decimal and move decimal 2 spots to the left
