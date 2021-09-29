@@ -87,6 +87,7 @@ namespace DynamicWebScrape
 
                 //Had to ad this loop because for some unknown reason Globals.newPrice
                 //was not being assigned the firstResult.text everytime
+                //TODO: switch to a do while and add a limit counter to it so we dont get a nendless loop
                 while (Globals.newPrice.Equals("") || Globals.newPrice == null)
                 {
                     Globals.newPrice = firstResult.Text;
@@ -178,7 +179,5 @@ namespace DynamicWebScrape
             return(int.Parse(x));
         }
     }
-
-
 
 }
